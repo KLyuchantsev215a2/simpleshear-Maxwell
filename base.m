@@ -1,11 +1,11 @@
 clear;    
-
- fig = figure();
-% создание первого пустого кадра
- set(fig,'Position',[350,200,700,700]);
-  frame = getframe(fig);
- [im,map] = rgb2ind(frame.cdata,4);
- imwrite(im,map,'animation3.gif','DelayTime',0,'Loopcount',inf);
+% 
+%  fig = figure();
+% % создание первого пустого кадра
+%  set(fig,'Position',[350,200,700,700]);
+%   frame = getframe(fig);
+%  [im,map] = rgb2ind(frame.cdata,4);
+%  imwrite(im,map,'animation3.gif','DelayTime',0,'Loopcount',inf);
 
 rho_0 =3;
 v_0 = 1;
@@ -44,6 +44,8 @@ Ci=zeros(2,2,N);  % field of Ci
 
 U=zeros(N,1);
 Energy_time=zeros(fix(Time/dt),1);
+coord_top_x=zeros(N,1);
+coord_top_y=zeros(N,1);
 U_time=zeros(fix(Time/dt),1);%potential energy
 T_time=zeros(fix(Time/dt),1);%kinetic energy
 time=zeros(fix(Time/dt),1);
@@ -117,8 +119,8 @@ for n = 1:fix(Time/dt)
      % U_time(n)=U_energy;%potential energy
     %  T_time(n)= T_energy;
     %  Energy_time(n)=U_energy + T_energy;
-%       coord_top_x(n)=x(1,sqn*sqn)-X_old(1,sqn*sqn);
-%       coord_top_y(n)=x(2,sqn*sqn)-X_old(2,sqn*sqn);
+       coord_top_x(n)=x(1,sqn*sqn)-X_old(1,sqn*sqn);
+       coord_top_y(n)=x(2,sqn*sqn)-X_old(2,sqn*sqn);
 %       coord_midle_x(n)=x(1,sqn*sqn-fix(sqn/2))-X_old(1,sqn*sqn-fix(sqn/2));
 %       coord_midle_y(n)=x(2,sqn*sqn-fix(sqn/2))-X_old(2,sqn*sqn-fix(sqn/2));
       time(n)=n*dt;
@@ -135,7 +137,7 @@ for n = 1:fix(Time/dt)
 %         y_coord = Energy_time;
 %         plot(x_coord,y_coord);
 %          pause(0.0000001);
-     plotmy=myplot(x,V,F,N,SIG,l,v,Energy_time,time,n,im,frame,map,fig);
+%      plotmy=myplot(x,V,F,N,SIG,l,v,Energy_time,time,n,im,frame,map,fig);
       life_time=n*dt;
 %       disp(x(2,N));%,x(2,N),life_time);
        disp(life_time);
