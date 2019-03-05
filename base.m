@@ -1,16 +1,23 @@
 clear;    
 % 
-%  fig = figure();
+  fig = figure();
 % % создание первого пустого кадра
-%  set(fig,'Position',[350,200,700,700]);
-%   frame = getframe(fig);
-%  [im,map] = rgb2ind(frame.cdata,4);
-%  imwrite(im,map,'animation3.gif','DelayTime',0,'Loopcount',inf);
+  set(fig,'Position',[350,200,700,700]);
+   frame = getframe(fig);
+  [im,map] = rgb2ind(frame.cdata,4);
+  imwrite(im,map,'animation3.gif','DelayTime',0,'Loopcount',inf);
+  
+ss1=load('Stresses_Maxwell_etaEq1by25_C11.txt');
+ss2=load('Stresses_Maxwell_etaEq1by25_C12.txt');
+ss3=load('Stresses_Maxwell_etaEq1by25_C22.txt');
+
+ss4=load('top_right_x_etaEq1by25.txt');
+ss5=load('top_right_y_etaEq1by25.txt');
 
 rho_0 =3;
 v_0 = 1;
 Time = 1.5;
-sqn=10;
+sqn=11;
 l=1;
 N=sqn*sqn;
 S=l*l;
@@ -18,7 +25,7 @@ m=rho_0*S/N;
 
 nu=0.4;
 mu = 1.25;
-eta = 1.25/25;  % relaxation time = eta/mu = 1 s
+eta = 1/25;  % relaxation time = eta/mu = 1 s
 k=2*mu*(1+nu)/(3*(1-2*nu));
 E=9*k*mu/(3*k+mu);   % модуль Юнга
 
@@ -44,8 +51,8 @@ Ci=zeros(2,2,N);  % field of Ci
 
 U=zeros(N,1);
 Energy_time=zeros(fix(Time/dt),1);
-coord_top_x=zeros(N,1);
-coord_top_y=zeros(N,1);
+
+
 U_time=zeros(fix(Time/dt),1);%potential energy
 T_time=zeros(fix(Time/dt),1);%kinetic energy
 time=zeros(fix(Time/dt),1);
@@ -60,14 +67,26 @@ Ci = Ci_new;
 W_cor=zeros(N,N);
 nabla_W_cor=zeros(2,N,N);
 Hessian_W_cor=zeros(2,N,N);
+
 coord_midle=zeros(2,fix(Time/dt));
-coord_top=zeros(2,fix(Time/dt));
+
+coord_top_right_x=zeros(1,fix(Time/dt));
+coord_top_right_y=zeros(1,fix(Time/dt));
+
 [W_cor,nabla_W_cor_0,Hessian_W_cor]=ComputeW_final(x,V,N,h,dh);
 
 
 %ss1=load('Displacment_X_top_right.txt');
 %ss2=load('Displacment_Y_top_right.txt');
 %plot(ss1(:,2),ss1(:,3),'r',ss2(:,2),ss2(:,3),'g');
+ x_coord(1:N) = x(1,1:N);
+     y_coord(1:N) = x(2,1:N);
+%     subplot(2,2,1);
+     
+    scatter(x_coord,y_coord);
+     
+     
+     
 for n = 1:fix(Time/dt)
     L=zeros(2,2,N);
 %     if(fix(n/200)==n/200)
@@ -119,8 +138,12 @@ for n = 1:fix(Time/dt)
      % U_time(n)=U_energy;%potential energy
     %  T_time(n)= T_energy;
     %  Energy_time(n)=U_energy + T_energy;
-       coord_top_x(n)=x(1,sqn*sqn)-X_old(1,sqn*sqn);
-       coord_top_y(n)=x(2,sqn*sqn)-X_old(2,sqn*sqn);
+       coord_top_right_x(1,n)=x(1,sqn*sqn)-X_old(1,sqn*sqn);
+       coord_top_right_y(1,n)=x(2,sqn*sqn)-X_old(2,sqn*sqn);
+       
+       C_1_1(n)=SIG(1,1,61);
+      C_2_2(n)=SIG(2,2,61);
+      C_1_2(n)=SIG(1,2,61);
 %       coord_midle_x(n)=x(1,sqn*sqn-fix(sqn/2))-X_old(1,sqn*sqn-fix(sqn/2));
 %       coord_midle_y(n)=x(2,sqn*sqn-fix(sqn/2))-X_old(2,sqn*sqn-fix(sqn/2));
       time(n)=n*dt;
@@ -137,14 +160,21 @@ for n = 1:fix(Time/dt)
 %         y_coord = Energy_time;
 %         plot(x_coord,y_coord);
 %          pause(0.0000001);
-%      plotmy=myplot(x,V,F,N,SIG,l,v,Energy_time,time,n,im,frame,map,fig);
+     plotmy=myplot(x,V,F,N,SIG,l,v,Energy_time,time,n,im,frame,map,fig);
       life_time=n*dt;
 %       disp(x(2,N));%,x(2,N),life_time);
        disp(life_time);
+       
 end
+   x_coord(1:N) = x(1,1:N);
+     y_coord(1:N) = x(2,1:N);
+%     subplot(2,2,1);
+   
+    scatter(x_coord,y_coord);
 
-plot( time, coord_top_x, time, coord_top_y,ss1(:,2),ss1(:,3),'--',ss2(:,2),ss2(:,3),'--');
-%plot( time, coord_midle_x, time, coord_midle_y);
+plot( time(1:n),  C_1_1(1:n), time(1:n),  C_1_2(1:n), time(1:n),C_2_2(1:n),ss1(:,2), ss1(:,3),'k',ss2(:,2), ss2(:,3),'k',ss3(:,2), ss3(:,3),'k');
+%plot( time(1:n), coord_top_right_x(1,1:n), time(1:n),coord_top_right_x(1,1:n),ss4(:,2),ss4(:,3),'k',ss5(:,2),ss5(:,3),'k');
+
 %plot( time, Energy_time);
 % x_coord =time;
 % y_coord = Energy_time;
